@@ -1,0 +1,61 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+env/
+.tf-env/
+tf-env/
+.venv/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# PyCharm / VSCode project files
+.idea/
+.vscode/
+
+# Environment variables and secrets
+.env
+*.env
+
+# Logs and temp files
+*.log
+*.tmp
+*.swp
+
+# Model checkpoints and saved models
+*.ckpt
+*.pb
+*.h5
+*.hdf5
+checkpoint/
+saved_model/
+runs/
+*.tflite
+
+# Hugging Face cache
+~/.cache/huggingface
+huggingface/
+*.safetensors
+
+# Dataset cache
+cache/
+*.arrow
+*.jsonl
+*.csv
+
+# TensorBoard logs
+logs/
+events.out.tfevents.*
+
+# Node.js dependencies
+node_modules/
+
+# macOS files
+.DS_Store
+
+# Windows system files
+Thumbs.db
