@@ -14,5 +14,4 @@ unzip -o distilbert_super_agent.zip
 
 echo "✅ Model ready"
 
-# Start your app (adjust this as needed)
-npm run start
+
