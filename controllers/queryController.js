@@ -1,4 +1,5 @@
 const { spawn } = require("child_process");
+const path = require("path");
 
 exports.queryProcess = (req, res) => {
     const query = req.body.query;
@@ -7,27 +8,47 @@ exports.queryProcess = (req, res) => {
         return res.status(400).json({ error: "Missing query" });
     }
 
-    // Correct path to classify.py relative to this controller file
-    const pythonProcess = spawn("python3", ["../classify.py", query], {
-        cwd: __dirname, // ensure working directory is the controller's directory
-    });
+    const python = process.platform === "win32" ? "python" : "python3";
+    const scriptPath = path.join(__dirname, "..", "classify.py");
+
+    console.log("🔥 Query:", query);
+    console.log("🛠 Running script:", scriptPath);
+
+    const pythonProcess = spawn(python, [scriptPath, query]);
 
     let result = "";
+    let errorOutput = "";
 
     pythonProcess.stdout.on("data", (data) => {
         result += data.toString();
     });
 
     pythonProcess.stderr.on("data", (data) => {
-        console.error(`Python error: ${data}`);
+        errorOutput += data.toString();
     });
 
-    pythonProcess.on("close", () => {
-        try {
-            const output = JSON.parse(result);
-            res.json(output);
-        } catch (error) {
-            res.status(500).json({ error: "Failed to parse model output" });
+    pythonProcess.on("close", (code) => {
+        if (errorOutput) {
+            console.error("🐍 Python stderr:", errorOutput);
         }
+
+        try {
+            console.log("📤 Raw Python output:", result);
+            const json = JSON.parse(result);
+            return res.status(200).json(json);
+        } catch (err) {
+            return res.status(500).json({
+                error: "❌ Failed to parse Python output",
+                raw_output: result,
+                stderr: errorOutput,
+            });
+        }
+    });
+
+    pythonProcess.on("error", (err) => {
+        return res.status(500).json({
+            error: "❌ Failed to start Python process",
+            details: err.message,
+        });
     });
 };
